@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends
 from blockguard.db.session import get_db_session
 from blockguard.schemas.transaction import TransactionIn
 from blockguard.services.orchestrator import AuditOrchestrator
+from blockguard.agents.simple_compliance_checker import ComplianceChecker as SimpleComplianceChecker
 
 router = APIRouter()
 
@@ -15,3 +16,9 @@ async def run_audit(txs: List[TransactionIn], session=Depends(get_db_session)) -
     orchestrator = AuditOrchestrator(session)
     report_id = await orchestrator.run_audit(txs)
     return {"report_id": report_id}
+
+
+@router.post("/compliance", summary="Validate a transaction via rule-based ComplianceChecker")
+async def validate_compliance(tx: dict) -> dict:
+    checker = SimpleComplianceChecker()
+    return checker.validate(tx)
