@@ -7,6 +7,7 @@ from blockguard.db.session import get_db_session
 from blockguard.schemas.transaction import TransactionIn
 from blockguard.services.orchestrator import AuditOrchestrator
 from blockguard.agents.simple_compliance_checker import ComplianceChecker as SimpleComplianceChecker
+from blockguard.services.audit_processor import AuditProcessor
 
 router = APIRouter()
 
@@ -22,3 +23,9 @@ async def run_audit(txs: List[TransactionIn], session=Depends(get_db_session)) -
 async def validate_compliance(tx: dict) -> dict:
     checker = SimpleComplianceChecker()
     return checker.validate(tx)
+
+
+@router.post("/process", summary="Run the full audit pipeline for provided transactions")
+async def process_audit(txs: List[dict]) -> dict:
+    processor = AuditProcessor.default()
+    return processor.process(txs)
