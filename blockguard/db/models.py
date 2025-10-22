@@ -21,7 +21,7 @@ class Transaction(Base, UUIDMixin):
     token_symbol: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
     amount: Mapped[float] = mapped_column(Numeric(36, 18))
     timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
-    metadata: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    tx_metadata: Mapped[Optional[dict]] = mapped_column("metadata", JSON, nullable=True)
 
     findings: Mapped[list[AuditFinding]] = relationship("AuditFinding", back_populates="transaction")
 
